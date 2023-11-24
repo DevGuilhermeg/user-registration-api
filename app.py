@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt  # Importe a extensão Flask-Bcrypt
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://cadastro_usuario_user:ZEeEUZKLOE21ZUprGPLy1rWlmD0S9DLx@dpg-cleo2lbl00ks739s9660-a/cadastro_usuario'
@@ -9,6 +9,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
 
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)  # Crie uma instância do Flask-Bcrypt
 
 class Pessoa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -16,7 +17,6 @@ class Pessoa(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     idade = db.Column(db.Integer, nullable=False)
     senha = db.Column(db.String(60), nullable=False)
-    
 
 @app.route('/pessoas', methods=['GET'])
 def obter_pessoas():
@@ -26,8 +26,6 @@ def obter_pessoas():
     
     pessoas_json = [{"id": pessoa.id, "nome": pessoa.nome, "email": pessoa.email, "idade": pessoa.idade} for pessoa in pessoas]
     return jsonify({"pessoas": pessoas_json})
-
-
 
 @app.route('/pessoas', methods=['POST'])
 def cadastrar_pessoa():
@@ -42,8 +40,6 @@ def cadastrar_pessoa():
     db.session.commit()
     return jsonify({"mensagem": "Pessoa cadastrada com sucesso!"})
 
-
-
 @app.route('/pessoas/<int:pessoa_id>', methods=['DELETE'])
 def excluir_pessoa(pessoa_id):
     pessoa = Pessoa.query.get(pessoa_id)
@@ -56,5 +52,5 @@ def excluir_pessoa(pessoa_id):
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Cria as tabelas no banco de dados
-    app.run(debug=True)  # Inicia o servidor Flask em modo de depuração
+        db.create_all()
+    app.run(debug=True)
