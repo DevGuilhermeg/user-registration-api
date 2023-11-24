@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
@@ -14,7 +14,6 @@ class Pessoa(db.Model):
     nome = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     idade = db.Column(db.Integer, nullable=False)
-    senha = db.Column(db.String(60), nullable=False)
 
 @app.route('/pessoas', methods=['GET'])
 def obter_pessoas():
@@ -26,14 +25,17 @@ def obter_pessoas():
     return jsonify({"pessoas": pessoas_json})
 
 
+@app.route('/pessoas', methods=['POST'])
+def cadastrar_pessoa():
+    dados = request.json
+    if not all(key in dados for key in ['nome', 'email', 'idade']):
+        return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
 
-
-
-
+    nova_pessoa = Pessoa(nome=dados['nome'], email=dados['email'], idade=dados['idade'])
+    db.session.add(nova_pessoa)
+    db.session.commit()
+    return jsonify({"mensagem": "Pessoa cadastrada com sucesso!"})
     
-
-
-
 @app.route('/pessoas/<int:pessoa_id>', methods=['DELETE'])
 def excluir_pessoa(pessoa_id):
     pessoa = Pessoa.query.get(pessoa_id)
