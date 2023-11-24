@@ -2,11 +2,11 @@ import psycopg2
 from psycopg2 import sql
 
 # Substitua essas informações com as suas
-host = "dpg-clgivcug1b2c73a92k5g-a"
+host = "dpg-clgjee58td7s73bi9dkg-a"
 port = 5432
-user = "usuarios_n9tr_user"
-password = "X3M5m7QVIRRVGvdgFaPNIUjZTp5f4yDi"
-database = "postgres://usuarios_n9tr_user:X3M5m7QVIRRVGvdgFaPNIUjZTp5f4yDi@dpg-clgivcug1b2c73a92k5g-a/usuarios_n9tr"
+user = "bando_usuarios_29xx_user"
+password = "ZaB44taTeXiTopMZsBlU8kmjultHhEqJ"
+database = "bando_usuarios_29xx"
 
 # Conectar ao servidor PostgreSQL
 conn = psycopg2.connect(
