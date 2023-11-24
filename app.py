@@ -18,8 +18,12 @@ class Pessoa(db.Model):
 @app.route('/pessoas', methods=['GET'])
 def obter_pessoas():
     pessoas = Pessoa.query.all()
+    if not pessoas:
+        return jsonify({"mensagem": "Nenhuma pessoa cadastrada."})
+    
     pessoas_json = [{"id": pessoa.id, "nome": pessoa.nome, "email": pessoa.email, "idade": pessoa.idade} for pessoa in pessoas]
     return jsonify({"pessoas": pessoas_json})
+
 
 @app.route('/pessoas', methods=['POST'])
 def cadastrar_pessoa():
