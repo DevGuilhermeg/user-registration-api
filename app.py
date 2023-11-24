@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
+from flask_migrate import Migrate  # Adicione esta importação
 import os
 
 # Gere uma chave secreta aleatória com 24 bytes
@@ -17,12 +18,14 @@ app.config['SECRET_KEY'] = chave_secreta_str
 CORS(app)
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)  # Inicialize a migração
 
 class Pessoa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     idade = db.Column(db.Integer, nullable=False)
+    senha = db.Column(db.String(60), nullable=False)  # Substitua 'senha' por sua nova coluna
 
 @app.route('/pessoas', methods=['GET'])
 def obter_pessoas():
@@ -73,5 +76,5 @@ def login():
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Cria as tabelas no banco de dados
-    app.run(debug=True)  # Inicia o servidor Flask em modo de depuração
+        db.create_all()  # Remova esta linha, pois não precisamos mais dela
+    app.run(debug=True)
