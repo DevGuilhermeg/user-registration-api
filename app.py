@@ -27,6 +27,7 @@ def obter_pessoas():
     return jsonify({"pessoas": pessoas_json})
 
 
+
 @app.route('/pessoas', methods=['POST'])
 def cadastrar_pessoa():
     dados = request.json
@@ -34,12 +35,12 @@ def cadastrar_pessoa():
         return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
 
     senha_hash = bcrypt.generate_password_hash(dados['senha']).decode('utf-8')
-    senha_hash = '123456'
 
     nova_pessoa = Pessoa(nome=dados['nome'], email=dados['email'], idade=dados['idade'], senha=senha_hash)
     db.session.add(nova_pessoa)
     db.session.commit()
     return jsonify({"mensagem": "Pessoa cadastrada com sucesso!"})
+
 
 
 @app.route('/pessoas/<int:pessoa_id>', methods=['DELETE'])
