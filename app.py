@@ -11,6 +11,10 @@ class Pessoa(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     idade = db.Column(db.Integer, nullable=False)
 
+# Cria as tabelas no banco de dados
+with app.app_context():
+    db.create_all()
+
 @app.route('/teste-conexao-bd', methods=['GET'])
 def teste_conexao_bd():
     try:
@@ -22,3 +26,7 @@ def teste_conexao_bd():
         return jsonify({"mensagem": "Conexão com o banco de dados bem-sucedida e registro adicionado."})
     except Exception as e:
         return jsonify({"erro": f"Erro na conexão com o banco de dados: {str(e)}"}), 500
+
+if __name__ == '__main__':
+    # Inicia o servidor Flask em modo de depuração
+    app.run(debug=True)
