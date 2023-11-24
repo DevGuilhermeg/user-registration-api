@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_bcrypt import Bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 # Gere uma chave secreta aleatória com 24 bytes
@@ -17,14 +17,13 @@ app.config['SECRET_KEY'] = chave_secreta_str
 CORS(app)
 
 db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
 
 class Pessoa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     idade = db.Column(db.Integer, nullable=False)
-    senha = db.Column(db.String(60), nullable=False)
+    senha = db.Column(db.String(128), nullable=False)  # O comprimento padrão para o hash do Werkzeug
 
 @app.route('/pessoas', methods=['GET'])
 def obter_pessoas():
@@ -41,7 +40,7 @@ def cadastrar_pessoa():
     if not all(key in dados for key in ['nome', 'email', 'idade', 'senha']):
         return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
 
-    senha_hash = bcrypt.generate_password_hash(dados['senha']).decode('utf-8')
+    senha_hash = generate_password_hash(dados['senha'])
 
     nova_pessoa = Pessoa(nome=dados['nome'], email=dados['email'], idade=dados['idade'], senha=senha_hash)
     db.session.add(nova_pessoa)
@@ -66,7 +65,7 @@ def login():
 
     usuario = Pessoa.query.filter_by(email=dados['email']).first()
 
-    if usuario and bcrypt.check_password_hash(usuario.senha, dados['senha']):
+    if usuario and check_password_hash(usuario.senha, dados['senha']):
         return jsonify({"mensagem": "Login bem-sucedido!"})
     else:
         return jsonify({"erro": "Credenciais inválidas"}), 401
