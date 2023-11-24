@@ -14,7 +14,7 @@ class Pessoa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
-    senha = db.Column(db.String(60), nullable=False)
+    idade = db.Column(db.Integer, nullable=False)
 
 @app.route('/pessoas', methods=['GET'])
 def obter_pessoas():
