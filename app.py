@@ -2,11 +2,18 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
+import os
+
+# Gere uma chave secreta aleatória com 24 bytes
+chave_secreta = os.urandom(24)
+
+# Converta a chave para uma string hexadecimal
+chave_secreta_str = chave_secreta.hex()
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://cadastro_usuario_user:ZEeEUZKLOE21ZUprGPLy1rWlmD0S9DLx@dpg-cleo2lbl00ks739s9660-a/cadastro_usuario'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# Chave secreta para o Flask-Bcrypt
+app.config['SECRET_KEY'] = chave_secreta_str
 CORS(app)
 
 db = SQLAlchemy(app)
