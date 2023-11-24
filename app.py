@@ -67,4 +67,4 @@ def login():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Cria as tabelas no banco de dados
-    app.run(debug=True)  # Inicia o servidor Flask em modo de depuração
+    app.run(debug=True, use_reloader=False)  # Inicia o servidor Flask em modo de depuração
