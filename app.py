@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask_bcrypt import Bcrypt  # Importe a extensão Flask-Bcrypt
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://cadastro_usuario_user:ZEeEUZKLOE21ZUprGPLy1rWlmD0S9DLx@dpg-cleo2lbl00ks739s9660-a/cadastro_usuario'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://bando_usuarios_user:FQx4koA5p10ddjvfgvs5A6pwTWkp8UNF@dpg-clgi4t6g1b2c73a8ueq0-a/bando_usuarios'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
 
