@@ -9,8 +9,11 @@ db = SQLAlchemy(app)
 @app.route('/teste-conexao-bd', methods=['GET'])
 def teste_conexao_bd():
     try:
-        db.session.execute("SELECT 1").scalar()
-        return jsonify({"mensagem": "Conexão com o banco de dados bem-sucedida."})
+        result = db.engine.execute(text("SELECT 1"))
+        if result.scalar() == 1:
+            return jsonify({"mensagem": "Conexão com o banco de dados bem-sucedida."})
+        else:
+            return jsonify({"erro": "A consulta não retornou o valor esperado."}), 500
     except Exception as e:
         return jsonify({"erro": f"Erro na conexão com o banco de dados: {str(e)}"}), 500
 
