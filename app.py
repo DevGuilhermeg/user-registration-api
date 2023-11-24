@@ -41,6 +41,7 @@ def cadastrar_pessoa():
         return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
 
     senha_hash = '123456'
+    senha_hash = bcrypt.generate_password_hash(dados['senha']).decode('utf-8')
 
     nova_pessoa = Pessoa(nome=dados['nome'], email=dados['email'], idade=dados['idade'], senha=senha_hash)
     db.session.add(nova_pessoa)
