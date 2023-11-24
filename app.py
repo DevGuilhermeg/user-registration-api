@@ -9,6 +9,15 @@ CORS(app)
 
 db = SQLAlchemy(app)
 
+if __name__ == '__main__':
+    # Cria as tabelas no banco de dados
+    with app.app_context():
+        db.create_all()
+
+    # Inicia o servidor Flask em modo de depuração
+    app.run(debug=True)
+
+
 class Pessoa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(50), nullable=False)
