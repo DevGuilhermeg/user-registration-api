@@ -6,7 +6,7 @@ from flask_bcrypt import Bcrypt
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://cadastro_usuario_user:ZEeEUZKLOE21ZUprGPLy1rWlmD0S9DLx@dpg-cleo2lbl00ks739s9660-a/cadastro_usuario'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'sua_chave_secreta_aleatoria'  # Chave secreta para o Flask-Bcrypt
+# Chave secreta para o Flask-Bcrypt
 CORS(app)
 
 db = SQLAlchemy(app)
