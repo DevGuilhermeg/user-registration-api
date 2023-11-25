@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-import bcrypt
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://bando_usuarios_29xx_user:ZaB44taTeXiTopMZsBlU8kmjultHhEqJ@dpg-clgjee58td7s73bi9dkg-a.ohio-postgres.render.com/bando_usuarios_29xx'
@@ -34,9 +33,7 @@ def cadastrar_pessoa():
         if not all(key in dados for key in campos_obrigatorios):
             return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
 
-        senha_hash = bcrypt.hashpw(dados['senha'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-
-        nova_pessoa = Pessoa(nome=dados['nome'], email=dados['email'], idade=dados['idade'], senha=senha_hash)
+        nova_pessoa = Pessoa(nome=dados['nome'], email=dados['email'], idade=dados['idade'], senha=dados['senha'])
         db.session.add(nova_pessoa)
         db.session.commit()
         return jsonify({"mensagem": "Pessoa cadastrada com sucesso!"})
@@ -66,9 +63,9 @@ def fazer_login():
     if not all([email, senha]):
         return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
 
-    pessoa = Pessoa.query.filter_by(email=email).first()
+    pessoa = Pessoa.query.filter_by(email=email, senha=senha).first()
 
-    if pessoa and bcrypt.check_password_hash(pessoa.senha, senha):
+    if pessoa:
         return jsonify({"mensagem": "Login bem-sucedido!"})
     else:
         return jsonify({"erro": "Credenciais inválidas"}), 401
