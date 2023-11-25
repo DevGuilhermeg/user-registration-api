@@ -58,21 +58,20 @@ def excluir_pessoa(pessoa_id):
         return jsonify({"erro": f"Pessoa com ID {pessoa_id} não encontrada"}), 404
 
 @app.route('/login', methods=['POST'])
-def login():
-    try:
-        dados = request.json
-        if not all(key in dados for key in ['email', 'senha']):
-            return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
+def fazer_login():
+    dados = request.json
+    email = dados.get('email')
+    senha = dados.get('senha')
 
-        usuario = Pessoa.query.filter_by(email=dados['email']).first()
+    if not all([email, senha]):
+        return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
 
-        if usuario and bcrypt.check_password_hash(usuario.senha, dados['senha']):
-            return jsonify({"mensagem": "Login bem-sucedido!"})
-        else:
-            return jsonify({"erro": "Credenciais inválidas"}), 401
+    pessoa = Pessoa.query.filter_by(email=email).first()
 
-    except Exception as e:
-        return jsonify({"erro": f"Erro interno do servidor: {str(e)}"}), 500
+    if pessoa and bcrypt.check_password_hash(pessoa.senha, senha):
+        return jsonify({"mensagem": "Login bem-sucedido!"})
+    else:
+        return jsonify({"erro": "Credenciais inválidas"}), 401
 
 if __name__ == '__main__':
     with app.app_context():
