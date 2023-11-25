@@ -30,10 +30,11 @@ def obter_pessoas():
 def cadastrar_pessoa():
     try:
         dados = request.json
-        if not all(key in dados for key in ['nome', 'email', 'idade', 'senha']):
+        campos_obrigatorios = ['nome', 'email', 'idade', 'senha']
+        if not all(key in dados for key in campos_obrigatorios):
             return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
 
-        senha_hash = bcrypt.generate_password_hash(dados['senha']).decode('utf-8')
+        senha_hash = bcrypt.hashpw(dados['senha'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         nova_pessoa = Pessoa(nome=dados['nome'], email=dados['email'], idade=dados['idade'], senha=senha_hash)
         db.session.add(nova_pessoa)
@@ -41,7 +42,10 @@ def cadastrar_pessoa():
         return jsonify({"mensagem": "Pessoa cadastrada com sucesso!"})
 
     except Exception as e:
+        # Adicione um log para registrar a exceção
+        app.logger.error(f"Erro durante o cadastro de pessoa: {str(e)}")
         return jsonify({"erro": f"Erro interno do servidor: {str(e)}"}), 500
+
 
 @app.route('/pessoas/<int:pessoa_id>', methods=['DELETE'])
 def excluir_pessoa(pessoa_id):
