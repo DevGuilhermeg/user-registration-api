@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+import bcrypt
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://bando_usuarios_29xx_user:ZaB44taTeXiTopMZsBlU8kmjultHhEqJ@dpg-clgjee58td7s73bi9dkg-a.ohio-postgres.render.com/bando_usuarios_29xx'
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
 
@@ -28,16 +28,20 @@ def obter_pessoas():
 
 @app.route('/pessoas', methods=['POST'])
 def cadastrar_pessoa():
-    dados = request.json
-    if not all(key in dados for key in ['nome', 'email', 'idade', 'senha']):
-        return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
+    try:
+        dados = request.json
+        if not all(key in dados for key in ['nome', 'email', 'idade', 'senha']):
+            return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
 
-    senha_hash = bcrypt.generate_password_hash(dados['senha']).decode('utf-8')
+        senha_hash = bcrypt.generate_password_hash(dados['senha']).decode('utf-8')
 
-    nova_pessoa = Pessoa(nome=dados['nome'], email=dados['email'], idade=dados['idade'], senha=senha_hash)
-    db.session.add(nova_pessoa)
-    db.session.commit()
-    return jsonify({"mensagem": "Pessoa cadastrada com sucesso!"})
+        nova_pessoa = Pessoa(nome=dados['nome'], email=dados['email'], idade=dados['idade'], senha=senha_hash)
+        db.session.add(nova_pessoa)
+        db.session.commit()
+        return jsonify({"mensagem": "Pessoa cadastrada com sucesso!"})
+
+    except Exception as e:
+        return jsonify({"erro": f"Erro interno do servidor: {str(e)}"}), 500
 
 @app.route('/pessoas/<int:pessoa_id>', methods=['DELETE'])
 def excluir_pessoa(pessoa_id):
@@ -51,18 +55,22 @@ def excluir_pessoa(pessoa_id):
 
 @app.route('/login', methods=['POST'])
 def login():
-    dados = request.json
-    if not all(key in dados for key in ['email', 'senha']):
-        return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
+    try:
+        dados = request.json
+        if not all(key in dados for key in ['email', 'senha']):
+            return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
 
-    usuario = Pessoa.query.filter_by(email=dados['email']).first()
+        usuario = Pessoa.query.filter_by(email=dados['email']).first()
 
-    if usuario and bcrypt.check_password_hash(usuario.senha, dados['senha']):
-        return jsonify({"mensagem": "Login bem-sucedido!"})
-    else:
-        return jsonify({"erro": "Credenciais inválidas"}), 401
+        if usuario and bcrypt.check_password_hash(usuario.senha, dados['senha']):
+            return jsonify({"mensagem": "Login bem-sucedido!"})
+        else:
+            return jsonify({"erro": "Credenciais inválidas"}), 401
+
+    except Exception as e:
+        return jsonify({"erro": f"Erro interno do servidor: {str(e)}"}), 500
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Cria as tabelas no banco de dados
-    app.run(debug=True, use_reloader=False)  # Inicia o servidor Flask em modo de depuração
+        db.create_all()
+    app.run(debug=True, use_reloader=False)
