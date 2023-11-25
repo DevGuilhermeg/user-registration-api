@@ -54,6 +54,17 @@ def excluir_pessoa(pessoa_id):
     else:
         return jsonify({"erro": f"Pessoa com ID {pessoa_id} não encontrada"}), 404
 
+@app.route('/pessoas/email/<string:email>', methods=['GET'])
+def obter_pessoa_por_email(email):
+    pessoa = Pessoa.query.filter_by(email=email).first()
+    
+    if pessoa:
+        pessoa_json = {"id": pessoa.id, "nome": pessoa.nome, "email": pessoa.email, "idade": pessoa.idade}
+        return jsonify({pessoa_json})
+    else:
+        return jsonify({"mensagem": f"Nenhuma pessoa encontrada com o email {email}"}), 404
+
+
 @app.route('/login', methods=['POST'])
 def fazer_login():
     dados = request.json
