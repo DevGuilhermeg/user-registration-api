@@ -60,7 +60,7 @@ def obter_pessoa_por_email(email):
     
     if pessoa:
         pessoa_json = {"id": pessoa.id, "nome": pessoa.nome, "email": pessoa.email, "idade": pessoa.idade}
-        return jsonify({pessoa_json})
+        return jsonify({"pessoa": pessoa_json})
     else:
         return jsonify({"mensagem": f"Nenhuma pessoa encontrada com o email {email}"}), 404
 
