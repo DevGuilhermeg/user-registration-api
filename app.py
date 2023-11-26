@@ -74,8 +74,8 @@ def cadastrar():
     senha = request.form.get('senhaC')
 
     dados = {"nome": nome, "email": email, "idade": int(idade), "senha": senha}
-    resposta = requests.post(url_cadastrar, json=dados)
-
+    
+    pessoa = Pessoa.query.filter_by(nome=nome, email=email, idade=idade, senha=senha).first()
     if resposta.status_code == 200:
         mensagem = "Pessoa cadastrada com sucesso!"
         # Retornar a mensagem de sucesso para ser renderizada na página HTML
